@@ -15,13 +15,15 @@
                 <li>
                     <!-- Input for editing the value -->
                     <input type="number" @bind="budget.Value" />
+                    <input type="checkbox" id="with_third_party" @bind="budget.IsWithThirdParty" />
+                    <label for="with_third_party">Is with third party</label>
                     <button @onclick="() => RemoveAdBudget(budget)">Remove</button>
                 </li>
             }
 </ul>
-<button class="btn btn-primary" @onclick="AddAdBudget">+</button>
+<button class="btn btn-primary" @onclick="AddAdBudget">+</button><br>
 <input type="checkbox" id="with_third_party" @bind="isWithThirdParty" />
-<label for="with_third_party">Is with third party</label>
+<label for="with_third_party">Is with third party</label><br>
 <button class="btn btn-primary" @onclick="HandleButtonCalculate">Calculate</button>
 
 @code {
@@ -85,7 +87,7 @@
         foreach(var budget in otherAdBudgets)
         {
             otherAdSpend += budget.Value;
-            if(budget.WithThirdParty) thirdPartyAdSpend += budget.Value;
+            if(budget.IsWithThirdParty) thirdPartyAdSpend += budget.Value;
         }
 
         float x = FindOptimizedAdBudget(otherAdSpend, thirdPartyAdSpend, 1000);
@@ -110,6 +112,6 @@
     private class AdBudget {
         @* string name; *@
         public float Value { get; set; }
-        public bool WithThirdParty { get; set; }
+        public bool IsWithThirdParty { get; set; }
     }
 }
