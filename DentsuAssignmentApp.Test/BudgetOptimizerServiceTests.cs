@@ -17,13 +17,37 @@ public class BudgetOptimizerServiceTests
         new List<AdBudget>() { new AdBudget(500f, true), new AdBudget(300f, true), new AdBudget(200f, false) },
     };
 
+    [Fact]
+    public void BudgetOptimizerService_SetParameters_ShouldSetCorrectly()
+    {
+        _service.SetParameters(new BudgetOptimizerService.OptimizerParams{
+            AgencyFeePercentage = 0.01f,
+            ThirdPartyFeePercentage = 0.02f,
+            FixedCostsAgencyHours = 100f,
+            OtherAdBudgets = TestBudgets[1],
+            TotalBudget = 10000f,
+            IsWithThirdParty = true
+        });
+
+        Assert.Equal(0.01f, _service.Params.AgencyFeePercentage, 0.01f);
+        Assert.Equal(0.02f, _service.Params.ThirdPartyFeePercentage, 0.01f);
+        Assert.Equal(100f, _service.Params.FixedCostsAgencyHours, 0.01f);
+        for(int i = 0; i < TestBudgets[1].Count; i++)
+        {
+            Assert.Equal(TestBudgets[1][i].Value, _service.Params.OtherAdBudgets[i].Value, 0.01f);
+            Assert.Equal(TestBudgets[1][i].IsWithThirdParty, _service.Params.OtherAdBudgets[i].IsWithThirdParty);
+        }
+        Assert.Equal(10000f, _service.Params.TotalBudget, 0.01f);
+        Assert.True(_service.Params.IsWithThirdParty);
+    }
+
     // testcases were precalculated on google spreadsheet with Goal Seek Addon
     [Theory]
     [InlineData(0f, 0f, 0f, 0, 0f, 0f, false, 0f)]
     [InlineData(0.1f, 0.05f, 2000f, 1, 15000f, 4000f, true, 3304.35f)]
     [InlineData(0.1f, 0.05f, 2000f, 1, 15000f, 1000f, true, 3304.35f)]
     [InlineData(0.1f, 0.05f, 100f, 2, 2000f, 200f, false, 690.9f)]
-    public void BudgetOptimizer_Solve_ShouldReturnCorrectResult(
+    public void BudgetOptimizerService_Solve_ShouldReturnCorrectResult(
         float agencyFeePercentage, float thirdPartyFeePercentage, float fixedCostsAgencyHours, 
         int budgetIndex, float totalBudgets, float initialGuess, bool isWithThirdParty, float expected)
     {
