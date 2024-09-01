@@ -58,11 +58,12 @@
             }
         );
 
-        BudgetOptimizerService.Solve(1000, 0.01f, 100);
+        BudgetOptimizerService.Solve(4000, 0.01f, 100);
 
         // Print the results
         Console.WriteLine($"Optimized Budget for Specific Ad (X4): €{BudgetOptimizerService.Result:F2}");
         Console.WriteLine($"Total Ad Spend (X): €{BudgetOptimizerService.TotalAdSpend:F2}");
+        Console.WriteLine($"Third-Party Ad Spend (X): €{BudgetOptimizerService.ThirdPartyAdSpend:F2}");
         Console.WriteLine($"Agency Fees: €{BudgetOptimizerService.AgencyFees:F2}");
         Console.WriteLine($"Third-Party Tool Fees: €{BudgetOptimizerService.ThirdPartyFees:F2}");
         Console.WriteLine($"Fixed Costs for Agency Hours: €{fixedCostsAgencyHours:F2}");

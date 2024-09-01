@@ -97,7 +97,6 @@ namespace DentsuAssignmentApp.Services
                 float spend = 0;
                 foreach(var budget in Params.OtherAdBudgets)
                 {
-                    spend += budget.Value;
                     if(budget.IsWithThirdParty) spend += budget.Value;
                 }
 
