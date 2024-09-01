@@ -1,12 +1,13 @@
 ﻿@rendermode InteractiveServer
+@inject BudgetOptimizerService BudgetOptimizerService
 
-<label for="total_budget">Total Campaign Budget:</label>
+<label for="total_budget">Total campaign budget:</label>
 <input type="number" id="total_budget" @bind="totalBudget"><br>
 <label for="agency_fee">Agency fee percentage:</label>
 <input type="number" id="agency_fee" @bind="agencyFeePercentage"><br>
 <label for="third_party_fee">Third-party tool fee percentage:</label>
 <input type="number" id="third_party_fee" @bind="thirdPartyFeePercentage"><br>
-<label for="hours">Hours:</label>
+<label for="hours">Fxied costs Agency hours:</label>
 <input type="number" id="hours" @bind="fixedCostsAgencyHours"><br>
 <label>Budget for other ads:</label><br>
 <ul>
@@ -35,7 +36,7 @@
     private List<AdBudget> otherAdBudgets = new();
 
     private void AddAdBudget() {
-        otherAdBudgets.Add(new AdBudget { Value = 0f });
+        otherAdBudgets.Add(new AdBudget(0, true));
         Console.WriteLine($"Added, Now {otherAdBudgets.Count}");
     } 
 
@@ -43,75 +44,28 @@
         otherAdBudgets.Remove(budget);
     }
 
-    private float BudgetEquation(float otherAdSpend, float thirdPartyAdSpend, float x)
-    {
-        float totalAdSpend = otherAdSpend + x;
-        float agencyFees = agencyFeePercentage * totalAdSpend;
-        // Huiun: include current ad if it also uses the third party tool
-        float thirdPartyFees = isWithThirdParty 
-            ? thirdPartyFeePercentage * (thirdPartyAdSpend + x) 
-            : thirdPartyFeePercentage * thirdPartyAdSpend;
-        float result = totalAdSpend + agencyFees + thirdPartyFees + fixedCostsAgencyHours;
-        return result - totalBudget;
-    }
-
-    @* Huiun: Newton-Raphson method to find the optimized budget *@
-    @* Reference: https://www.reddit.com/r/excel/comments/81coc9/how_to_solve_for_a_goal_seek_without_using_goal/ *@
-    private float FindOptimizedAdBudget(float otherAdSpend, float thirdPartyAdSpend, float initial)
-    {
-        float x = initial;
-        float tolerance = 0.01f;
-        float maxIterations = 100;
-        float iter = 0;
-        
-        while(
-            Math.Abs(BudgetEquation(otherAdSpend, thirdPartyAdSpend, x)) > tolerance
-            && iter < maxIterations)
-        {
-            float derivative = (
-                BudgetEquation(otherAdSpend, thirdPartyAdSpend, x + tolerance) - BudgetEquation(otherAdSpend, thirdPartyAdSpend, x)) 
-                / tolerance;
-            x = x - BudgetEquation(otherAdSpend, thirdPartyAdSpend, x) / derivative;
-            
-            iter++;
-        }
-
-        return x;
-    }
-
     private void HandleButtonCalculate()
     {
-        // precalculate it so no need for calculate it again within the equation
-        float otherAdSpend = 0;
-        float thirdPartyAdSpend = 0;
-        foreach(var budget in otherAdBudgets)
-        {
-            otherAdSpend += budget.Value;
-            if(budget.IsWithThirdParty) thirdPartyAdSpend += budget.Value;
-        }
+        BudgetOptimizerService.SetParameters(
+            new BudgetOptimizerService.OptimizerParams
+            {
+                AgencyFeePercentage = agencyFeePercentage,
+                ThirdPartyFeePercentage = thirdPartyFeePercentage,
+                FixedCostsAgencyHours = fixedCostsAgencyHours,
+                TotalBudget = totalBudget,
+                OtherAdBudgets = otherAdBudgets,
+                IsWithThirdParty = isWithThirdParty
+            }
+        );
 
-        float x = FindOptimizedAdBudget(otherAdSpend, thirdPartyAdSpend, 1000);
-
-        float totalAdSpend = otherAdSpend + x;
-        float agencyFees = agencyFeePercentage * totalAdSpend;
-                // Huiun: include current ad if it also uses the third party tool
-        float thirdPartyFees = isWithThirdParty 
-            ? thirdPartyFeePercentage * (thirdPartyAdSpend + x) 
-            : thirdPartyFeePercentage * thirdPartyAdSpend;
-        float totalOptimizedBudget = totalAdSpend + agencyFees + thirdPartyFees + fixedCostsAgencyHours;
+        BudgetOptimizerService.Solve(1000, 0.01f, 100);
 
         // Print the results
-        Console.WriteLine($"Optimized Budget for Specific Ad (X4): €{x:F2}");
-        Console.WriteLine($"Total Ad Spend (X): €{totalAdSpend:F2}");
-        Console.WriteLine($"Agency Fees: €{agencyFees:F2}");
-        Console.WriteLine($"Third-Party Tool Fees: €{thirdPartyFees:F2}");
+        Console.WriteLine($"Optimized Budget for Specific Ad (X4): €{BudgetOptimizerService.Result:F2}");
+        Console.WriteLine($"Total Ad Spend (X): €{BudgetOptimizerService.TotalAdSpend:F2}");
+        Console.WriteLine($"Agency Fees: €{BudgetOptimizerService.AgencyFees:F2}");
+        Console.WriteLine($"Third-Party Tool Fees: €{BudgetOptimizerService.ThirdPartyFees:F2}");
         Console.WriteLine($"Fixed Costs for Agency Hours: €{fixedCostsAgencyHours:F2}");
-        Console.WriteLine($"Total Campaign Budget (Calculated): €{totalOptimizedBudget:F2}");
-    }
-
-    private class AdBudget {
-        @* string name; *@
-        public float Value { get; set; }
-        public bool IsWithThirdParty { get; set; }
+        Console.WriteLine($"Total Campaign Budget (Calculated): €{BudgetOptimizerService.CalculatedTotalBudget:F2}");
     }
 }
