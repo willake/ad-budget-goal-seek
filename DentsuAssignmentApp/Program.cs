@@ -1,4 +1,4 @@
-using dentsu_assignment.Components;
+using DentsuAssignmentApp.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
