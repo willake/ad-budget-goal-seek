@@ -67,4 +67,29 @@ public class BudgetOptimizerServiceTests
         // Assert
         Assert.Equal(expected, actual, 0.01f);
     }
+
+    [Fact]
+    public void BudgetOptimizerService_Gets_ShouldProvideCorrectValues()
+    {
+        _service.SetParameters(new BudgetOptimizerService.OptimizerParams{
+            AgencyFeePercentage = 0.1f,
+            ThirdPartyFeePercentage = 0.05f,
+            FixedCostsAgencyHours = 2000f,
+            OtherAdBudgets = TestBudgets[1],
+            TotalBudget = 15000f,
+            IsWithThirdParty = true
+        });
+
+        _service.Solve(4000, 0.01f, 100);
+
+        float actual = _service.Result;
+
+        // Assert
+        Assert.Equal(3304.35f, actual, 0.01f);
+        Assert.Equal(11304.35f, _service.TotalAdSpend, 0.01f);
+        Assert.Equal(11304.35f, _service.ThirdPartyAdSpend, 0.01f);
+        Assert.Equal(1130.44f, _service.AgencyFees, 0.01f);
+        Assert.Equal(565.22f, _service.ThirdPartyFees, 0.01f);
+        Assert.Equal(15000f, _service.CalculatedTotalBudget, 0.01f);
+    }
 }
