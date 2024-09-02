@@ -1,0 +1,30 @@
+.optimizer-main {
+    width: 100%;
+}
+
+.optimizer-form {
+    width: 100%;
+    max-width: 900px;
+}
+
+.optimizer-form .row {
+    margin-bottom: 10px;
+}
+
+ul {
+    margin-top: 10px;
+}
+
+li .row {
+    width: 100%;
+}
+
+.third-party-title {
+    margin-left: 5px;
+}
+
+/* .btn-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+} */
