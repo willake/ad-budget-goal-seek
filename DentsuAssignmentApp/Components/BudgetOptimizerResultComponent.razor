@@ -1,0 +1,20 @@
+@rendermode InteractiveServer
+@inject BudgetOptimizerService BudgetOptimizerService
+
+@if (hasResult)
+{
+    <div class="optimizer-result">
+        <div class="row">
+            <div>Ad budget: @BudgetOptimizerService.Result</div>
+            <div>Total ad spend: @BudgetOptimizerService.TotalAdSpend</div>
+            <div>Agency fees: @BudgetOptimizerService.AgencyFees</div>
+            <div>Third party tool Fees: @BudgetOptimizerService.ThirdPartyFees</div>
+            <div>Fixed costs for agency hours: @BudgetOptimizerService.Params.FixedCostsAgencyHours</div>
+            <div>Total spend: @BudgetOptimizerService.CalculatedTotalSpend</div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool hasResult = false;
+}

@@ -89,19 +89,6 @@
                 </div>
             </div>
         </div>
-        @if (hasResult)
-        {
-            <div class="optimizer-result">
-                <div class="row">
-                    <div>Ad budget: @BudgetOptimizerService.Result</div>
-                    <div>Total ad spend: @BudgetOptimizerService.TotalAdSpend</div>
-                    <div>Agency fees: @BudgetOptimizerService.AgencyFees</div>
-                    <div>Third party tool Fees: @BudgetOptimizerService.ThirdPartyFees</div>
-                    <div>Fixed costs for agency hours: @BudgetOptimizerService.Params.FixedCostsAgencyHours</div>
-                    <div>Total spend: @BudgetOptimizerService.CalculatedTotalSpend</div>
-                </div>
-            </div>
-        }
     </div>
 </div>
 
@@ -115,7 +102,6 @@
     private float tolerance = 0.01f;
     private int maxIteration = 100;
     private List<AdBudget> otherAdBudgets = new();
-    private bool hasResult = false;
 
     private void AddAdBudget() {
         otherAdBudgets.Add(new AdBudget(0, true));
@@ -150,7 +136,5 @@
         Console.WriteLine($"Third-party tool fees: €{BudgetOptimizerService.ThirdPartyFees:F2}");
         Console.WriteLine($"Fixed costs for agency hours: €{fixedCostsAgencyHours:F2}");
         Console.WriteLine($"Total spend (calculated): €{BudgetOptimizerService.CalculatedTotalSpend:F2}");
-
-        hasResult = true;
     }
 }
