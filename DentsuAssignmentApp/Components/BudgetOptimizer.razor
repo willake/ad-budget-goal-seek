@@ -1,90 +1,100 @@
 ﻿@rendermode InteractiveServer
 @inject BudgetOptimizerService BudgetOptimizerService
 
-<div class="optimizer-main d-flex justify-content-center">
-    <div class="optimizer-form p-4">
-        <div class="row">
-            <label for="total_budget">Total campaign budget</label>
-            <div class="input-group">
-                <input class="form-control" type="number" id="total_budget" @bind="totalBudget">
-                <div class="input-group-append"><span class="input-group-text">€</span></div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                <label for="agency_fee">Agency fee percentage</label>
+<div class="container-fluid">
+    <div class="d-flex flex-column align-items-center">
+        <div class="optimizer-form">
+            <div class="row">
+                <label for="total_budget">Total campaign budget</label>
                 <div class="input-group">
-                    <input class="form-control" type="number" id="agency_fee" @bind="agencyFeePercentage">
+                    <input class="form-control" type="number" id="total_budget" @bind="totalBudget">
+                    <div class="input-group-append"><span class="input-group-text">€</span></div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <label for="third_party_fee">Third-party tool fee percentage</label>
-                <div class="input-group">
-                    <input class="form-control" type="number" id="third_party_fee" @bind="thirdPartyFeePercentage">
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="agency_fee">Agency fee percentage</label>
+                    <div class="input-group">
+                        <input class="form-control" type="number" id="agency_fee" @bind="agencyFeePercentage">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label for="third_party_fee">Third-party tool fee percentage</label>
+                    <div class="input-group">
+                        <input class="form-control" type="number" id="third_party_fee" @bind="thirdPartyFeePercentage">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label for="hours">Fxied costs Agency hours</label>
+                    <div class="input-group">
+                        <input class="form-control" type="number" id="hours" @bind="fixedCostsAgencyHours">
+                    <div class="input-group-append"><span class="input-group-text">€</span></div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <label for="hours">Fxied costs Agency hours</label>
-                <div class="input-group">
-                    <input class="form-control" type="number" id="hours" @bind="fixedCostsAgencyHours">
-                <div class="input-group-append"><span class="input-group-text">€</span></div>
             </div>
-        </div>
-        </div>
-        <div class="row">
-            <div class="d-flex justify-content-between">
-                <div class="p-2">Budget for other ads</div>
-                <button class="btn btn-primary" @onclick="AddAdBudget">Add new budget</button>
-            </div>
-            <ul class="list-group">
-                @foreach (var budget in otherAdBudgets)
-                    {
-                        <li class="list-group-item d-flex justify-content-between">
-                            <div class="input-group">
-                                <div class="input-group-append">
-                                    <div class="input-group-text">
-                                        <input type="checkbox" id="with_third_party" @bind="budget.IsWithThirdParty" />
-                                        <div class="third-party-title">Is with third party?</div>
+            <div class="row">
+                <div class="d-flex justify-content-between">
+                    <div class="p-2">Budget for other ads</div>
+                    <button class="btn btn-primary" @onclick="AddAdBudget">Add new budget</button>
+                </div>
+                <ul class="list-group">
+                    @foreach (var budget in otherAdBudgets)
+                        {
+                            <li class="list-group-item d-flex justify-content-between">
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">
+                                            <input type="checkbox" id="with_third_party" @bind="budget.IsWithThirdParty" />
+                                            <div class="third-party-title">Is with third party?</div>
+                                        </div>
                                     </div>
+                                    <input type="number" @bind="budget.Value" />
+                                    <div class="input-group-append"><span class="input-group-text">€</span></div>
                                 </div>
-                                <input type="number" @bind="budget.Value" />
-                                <div class="input-group-append"><span class="input-group-text">€</span></div>
-                            </div>
-                            <button class="btn-remove btn btn-secondary" @onclick="() => RemoveAdBudget(budget)">Remove</button>
-                        </li>
-                    }
-            </ul>
-        </div>
-        <div class="row">
-            <label for="initial_guess">Initial guess</label>
-            <div class="input-group">
-                <input class="form-control" type="number" id="initial_guess" @bind="initialGuess">
-                <div class="input-group-append"><span class="input-group-text">€</span></div>
+                                <button class="btn-remove btn btn-secondary" @onclick="() => RemoveAdBudget(budget)">Remove</button>
+                            </li>
+                        }
+                </ul>
             </div>
-        </div>
-        <div class="row">
-            <div class="d-flex">
-                <input type="checkbox" id="with_third_party" @bind="isWithThirdParty" />
-                <div class="third-party-title" for="with_third_party">Is with third party?</div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <label for="tolerance">Tolerance</label>
+            <div class="row">
+                <label for="initial_guess">Initial guess</label>
                 <div class="input-group">
-                    <input class="form-control" type="number" id="tolerance" @bind="tolerance">
+                    <input class="form-control" type="number" id="initial_guess" @bind="initialGuess">
+                    <div class="input-group-append"><span class="input-group-text">€</span></div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <label for="max_iteration">Max iteration</label>
-                <div class="input-group">
-                    <input class="form-control" type="number" id="max_iteration" @bind="maxIteration">
+            <div class="row">
+                <div class="d-flex">
+                    <input type="checkbox" id="with_third_party" @bind="isWithThirdParty" />
+                    <div class="third-party-title" for="with_third_party">Is with third party?</div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="tolerance">Tolerance</label>
+                    <div class="input-group">
+                        <input class="form-control" type="number" id="tolerance" @bind="tolerance">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="max_iteration">Max iteration</label>
+                    <div class="input-group">
+                        <input class="form-control" type="number" id="max_iteration" @bind="maxIteration">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <button class="btn btn-primary" @onclick="HandleButtonCalculate">Calculate</button>
+            </div>
         </div>
-        <div class="row">
-            <button class="btn btn-primary" @onclick="HandleButtonCalculate">Calculate</button>
-        </div>
+        @if (hasResult)
+        {
+            <div class="optimizer-result">
+                <div class="row">
+                    <div>Ad budget: @BudgetOptimizerService.Result</div>
+                </div>
+            </div>
+        }
     </div>
 </div>
 
@@ -98,6 +108,7 @@
     private float tolerance = 0.01f;
     private int maxIteration = 100;
     private List<AdBudget> otherAdBudgets = new();
+    private bool hasResult = false;
 
     private void AddAdBudget() {
         otherAdBudgets.Add(new AdBudget(0, true));
@@ -132,5 +143,7 @@
         Console.WriteLine($"Third-Party Tool Fees: €{BudgetOptimizerService.ThirdPartyFees:F2}");
         Console.WriteLine($"Fixed Costs for Agency Hours: €{fixedCostsAgencyHours:F2}");
         Console.WriteLine($"Total Campaign Budget (Calculated): €{BudgetOptimizerService.CalculatedTotalBudget:F2}");
+
+        hasResult = true;
     }
 }

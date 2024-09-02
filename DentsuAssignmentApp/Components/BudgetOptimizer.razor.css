@@ -1,8 +1,9 @@
-.optimizer-main {
+.optimizer-form {
     width: 100%;
+    max-width: 900px;
 }
 
-.optimizer-form {
+.optimizer-result {
     width: 100%;
     max-width: 900px;
 }
