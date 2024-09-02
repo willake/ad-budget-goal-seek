@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using DentsuAssignmentApp.Services;
+using System.Threading.Tasks;
 
 public class BudgetOptimizerServiceTests
 {
@@ -47,7 +48,7 @@ public class BudgetOptimizerServiceTests
     [InlineData(0.1f, 0.05f, 2000f, 1, 15000f, 4000f, true, 3304.35f)]
     [InlineData(0.1f, 0.05f, 2000f, 1, 15000f, 1000f, true, 3304.35f)]
     [InlineData(0.1f, 0.05f, 100f, 2, 2000f, 200f, false, 690.9f)]
-    public void BudgetOptimizerService_Solve_ShouldReturnCorrectResult(
+    public async Task BudgetOptimizerService_Solve_ShouldReturnCorrectResult(
         float agencyFeePercentage, float thirdPartyFeePercentage, float fixedCostsAgencyHours, 
         int budgetIndex, float totalBudgets, float initialGuess, bool isWithThirdParty, float expected)
     {
@@ -60,7 +61,7 @@ public class BudgetOptimizerServiceTests
             IsWithThirdParty = isWithThirdParty
         });
 
-        _service.Solve(initialGuess, 0.01f, 100);
+        await _service.SolveAsync(initialGuess, 0.01f, 100);
 
         float actual = _service.Result;
 
@@ -69,7 +70,7 @@ public class BudgetOptimizerServiceTests
     }
 
     [Fact]
-    public void BudgetOptimizerService_Gets_ShouldProvideCorrectValues()
+    public async Task BudgetOptimizerService_Gets_ShouldProvideCorrectValues()
     {
         _service.SetParameters(new BudgetOptimizerService.OptimizerParams{
             AgencyFeePercentage = 0.1f,
@@ -80,7 +81,7 @@ public class BudgetOptimizerServiceTests
             IsWithThirdParty = true
         });
 
-        _service.Solve(4000, 0.01f, 100);
+        await _service.SolveAsync(4000, 0.01f, 100);
 
         float actual = _service.Result;
 

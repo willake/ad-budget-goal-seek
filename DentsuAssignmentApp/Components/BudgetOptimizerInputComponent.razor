@@ -102,6 +102,7 @@
     private float tolerance = 0.01f;
     private int maxIteration = 100;
     private List<AdBudget> otherAdBudgets = new();
+    private bool isSolving = false;
 
     private void AddAdBudget() {
         otherAdBudgets.Add(new AdBudget(0, true));
@@ -112,8 +113,10 @@
         otherAdBudgets.Remove(budget);
     }
 
-    private void HandleButtonCalculate()
+    private async Task HandleButtonCalculate()
     {
+        // handle while is solving
+        
         BudgetOptimizerService.SetParameters(
             new BudgetOptimizerService.OptimizerParams
             {
@@ -126,7 +129,9 @@
             }
         );
 
-        BudgetOptimizerService.Solve(initialGuess, tolerance, maxIteration);
+        isSolving = true;
+        await BudgetOptimizerService.SolveAsync(initialGuess, tolerance, maxIteration);
+        isSolving = false;
 
         // Print the results
         Console.WriteLine($"Optimized budget for specific ad (X4): €{BudgetOptimizerService.Result:F2}");
