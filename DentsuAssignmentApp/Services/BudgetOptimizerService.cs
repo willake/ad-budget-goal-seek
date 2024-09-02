@@ -5,8 +5,8 @@ namespace DentsuAssignmentApp.Services
         public event Action? OnSolve;
         public OptimizerParams Params { get; private set; }
         
-        private float _result;
-        public float Result { 
+        private decimal _result;
+        public decimal Result { 
             get => _result; 
             private set
             {
@@ -20,41 +20,41 @@ namespace DentsuAssignmentApp.Services
             Params = optimizerParams;
         }
 
-        public float BudgetEquation(
-            float otherAdSpend, float thirdPartyAdSpend, float x)
+        public decimal BudgetEquation(
+            decimal otherAdSpend, decimal thirdPartyAdSpend, decimal x)
         {
-            float totalAdSpend = otherAdSpend + x;
-            float agencyFees = Params.AgencyFeePercentage * totalAdSpend;
+            decimal totalAdSpend = otherAdSpend + x;
+            decimal agencyFees = Params.AgencyFeePercentage * totalAdSpend;
             // Huiun: include current ad if it also uses the third party tool
-            float thirdPartyFees = Params.IsWithThirdParty 
+            decimal thirdPartyFees = Params.IsWithThirdParty 
                 ? Params.ThirdPartyFeePercentage * (thirdPartyAdSpend + x) 
                 : Params.ThirdPartyFeePercentage * thirdPartyAdSpend;
-            float result = totalAdSpend + agencyFees + thirdPartyFees + Params.FixedCostsAgencyHours;
+            decimal result = totalAdSpend + agencyFees + thirdPartyFees + Params.FixedCostsAgencyHours;
             return result - Params.TotalBudget;
         }
 
         // Huiun: I use Newton-Raphson method to find the optimized budget
         // Reference: https://www.reddit.com/r/excel/comments/81coc9/how_to_solve_for_a_goal_seek_without_using_goal/
-        public async Task SolveAsync(float initialGuess, float tolerance, int maxIterations)
+        public async Task SolveAsync(decimal initialGuess, decimal tolerance, int maxIterations)
         {
             await Task.Run(() =>
             {
-                float otherAdSpend = 0;
-                float thirdPartyAdSpend = 0;
+                decimal otherAdSpend = 0;
+                decimal thirdPartyAdSpend = 0;
                 foreach(var budget in Params.OtherAdBudgets)
                 {
                     otherAdSpend += budget.Value;
                     if(budget.IsWithThirdParty) thirdPartyAdSpend += budget.Value;
                 }
 
-                float x = initialGuess;
-                float iter = 0;
+                decimal x = initialGuess;
+                decimal iter = 0;
                 
                 while(
                     Math.Abs(BudgetEquation(otherAdSpend, thirdPartyAdSpend, x)) > tolerance
                     && iter < maxIterations)
                 {
-                    float derivative = (
+                    decimal derivative = (
                         BudgetEquation(otherAdSpend, thirdPartyAdSpend, x + tolerance) - BudgetEquation(otherAdSpend, thirdPartyAdSpend, x)) 
                         / tolerance;
                     x = x - BudgetEquation(otherAdSpend, thirdPartyAdSpend, x) / derivative;
@@ -66,30 +66,30 @@ namespace DentsuAssignmentApp.Services
             });
         }
 
-        public float GetCalculatedTotalBudget(float x)
+        public decimal GetCalculatedTotalBudget(decimal x)
         {
-            float otherAdSpend = 0;
-            float thirdPartyAdSpend = 0;
+            decimal otherAdSpend = 0;
+            decimal thirdPartyAdSpend = 0;
             foreach(var budget in Params.OtherAdBudgets)
             {
                 otherAdSpend += budget.Value;
                 if(budget.IsWithThirdParty) thirdPartyAdSpend += budget.Value;
             }
 
-            float totalAdSpend = otherAdSpend + x;
-            float agencyFees = Params.AgencyFeePercentage * totalAdSpend;
+            decimal totalAdSpend = otherAdSpend + x;
+            decimal agencyFees = Params.AgencyFeePercentage * totalAdSpend;
             // Huiun: include current ad if it also uses the third party tool
-            float thirdPartyFees = Params.IsWithThirdParty 
+            decimal thirdPartyFees = Params.IsWithThirdParty 
                 ? Params.ThirdPartyFeePercentage * (thirdPartyAdSpend + x) 
                 : Params.ThirdPartyFeePercentage * thirdPartyAdSpend;
             return totalAdSpend + agencyFees + thirdPartyFees + Params.FixedCostsAgencyHours;
         }
 
-        public float TotalAdSpend 
+        public decimal TotalAdSpend 
         {
             get 
             {
-                float spend = 0;
+                decimal spend = 0;
                 foreach(var budget in Params.OtherAdBudgets)
                 {
                     spend += budget.Value;
@@ -100,11 +100,11 @@ namespace DentsuAssignmentApp.Services
                 return spend;
             }
         }
-        public float ThirdPartyAdSpend
+        public decimal ThirdPartyAdSpend
         {
             get
             {
-                float spend = 0;
+                decimal spend = 0;
                 foreach(var budget in Params.OtherAdBudgets)
                 {
                     if(budget.IsWithThirdParty) spend += budget.Value;
@@ -115,17 +115,17 @@ namespace DentsuAssignmentApp.Services
                 return spend;
             }
         }
-        public float AgencyFees { get { return Params.AgencyFeePercentage * TotalAdSpend; } }
-        public float ThirdPartyFees { get { return Params.ThirdPartyFeePercentage * ThirdPartyAdSpend; } }
-        public float CalculatedTotalSpend { get { return TotalAdSpend + AgencyFees + ThirdPartyFees + Params.FixedCostsAgencyHours; } }
+        public decimal AgencyFees { get { return Params.AgencyFeePercentage * TotalAdSpend; } }
+        public decimal ThirdPartyFees { get { return Params.ThirdPartyFeePercentage * ThirdPartyAdSpend; } }
+        public decimal CalculatedTotalSpend { get { return TotalAdSpend + AgencyFees + ThirdPartyFees + Params.FixedCostsAgencyHours; } }
         
         private void NotifiyOnSolve() => OnSolve?.Invoke();
         public struct OptimizerParams
         {
-            public float TotalBudget;
-            public float AgencyFeePercentage;
-            public float ThirdPartyFeePercentage;
-            public float FixedCostsAgencyHours;   
+            public decimal TotalBudget;
+            public decimal AgencyFeePercentage;
+            public decimal ThirdPartyFeePercentage;
+            public decimal FixedCostsAgencyHours;   
             public List<AdBudget> OtherAdBudgets;
             public bool IsWithThirdParty; // Is current ad uses thrid party tool
         }
@@ -133,9 +133,9 @@ namespace DentsuAssignmentApp.Services
 
     public class AdBudget 
     {
-        public float Value { get; set; }
+        public decimal Value { get; set; }
         public bool IsWithThirdParty { get; set; }
-        public AdBudget(float value, bool isWithThirdParty)
+        public AdBudget(decimal value, bool isWithThirdParty)
         {
             Value = value;
             IsWithThirdParty = isWithThirdParty;

@@ -93,13 +93,13 @@
 </div>
 
 @code {
-    private float totalBudget;
-    private float agencyFeePercentage = 0.1f;
-    private float thirdPartyFeePercentage = 0.05f;
-    private float fixedCostsAgencyHours;
+    private decimal totalBudget;
+    private decimal agencyFeePercentage = 0.1m;
+    private decimal thirdPartyFeePercentage = 0.05m;
+    private decimal fixedCostsAgencyHours;
     private bool isWithThirdParty;
-    private float initialGuess;
-    private float tolerance = 0.01f;
+    private decimal initialGuess;
+    private decimal tolerance = 0.01m;
     private int maxIteration = 100;
     private List<AdBudget> otherAdBudgets = new();
     private bool isSolving = false;

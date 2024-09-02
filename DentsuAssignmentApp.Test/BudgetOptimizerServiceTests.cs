@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using DentsuAssignmentApp.Services;
 using System.Threading.Tasks;
+using DentsuAssignmentApp.Test.Helpers;
+
+namespace DentsuAssignmentApp.Test;
 
 public class BudgetOptimizerServiceTests
 {
@@ -14,43 +17,45 @@ public class BudgetOptimizerServiceTests
     // Huiun: set budgets as static field because InlineData does not allow custom class array
     public static List<List<AdBudget>> TestBudgets = new() {
         new List<AdBudget>() {},
-        new List<AdBudget>() { new AdBudget(5000f, true), new AdBudget(3000f, true) },
-        new List<AdBudget>() { new AdBudget(500f, true), new AdBudget(300f, true), new AdBudget(200f, false) },
+        new List<AdBudget>() { new AdBudget(5000m, true), new AdBudget(3000m, true) },
+        new List<AdBudget>() { new AdBudget(500m, true), new AdBudget(300m, true), new AdBudget(200m, false) },
     };
 
     [Fact]
     public void BudgetOptimizerService_SetParameters_ShouldSetCorrectly()
     {
         _service.SetParameters(new BudgetOptimizerService.OptimizerParams{
-            AgencyFeePercentage = 0.01f,
-            ThirdPartyFeePercentage = 0.02f,
-            FixedCostsAgencyHours = 100f,
+            AgencyFeePercentage = 0.01m,
+            ThirdPartyFeePercentage = 0.02m,
+            FixedCostsAgencyHours = 100,
             OtherAdBudgets = TestBudgets[1],
-            TotalBudget = 10000f,
+            TotalBudget = 10000,
             IsWithThirdParty = true
         });
 
-        Assert.Equal(0.01f, _service.Params.AgencyFeePercentage, 0.01f);
-        Assert.Equal(0.02f, _service.Params.ThirdPartyFeePercentage, 0.01f);
-        Assert.Equal(100f, _service.Params.FixedCostsAgencyHours, 0.01f);
+        // Huiun: There might be a potential issue, which is using euqal on floating points 
+        CustomAssertions.DecimalEqual(0.01m, _service.Params.AgencyFeePercentage, 0.01m);
+        CustomAssertions.DecimalEqual(0.02m, _service.Params.ThirdPartyFeePercentage, 0.01m);
+        CustomAssertions.DecimalEqual(100m, _service.Params.FixedCostsAgencyHours, 0.01m);
         for(int i = 0; i < TestBudgets[1].Count; i++)
         {
-            Assert.Equal(TestBudgets[1][i].Value, _service.Params.OtherAdBudgets[i].Value, 0.01f);
+            CustomAssertions.DecimalEqual(TestBudgets[1][i].Value, _service.Params.OtherAdBudgets[i].Value, 0.01m);
             Assert.Equal(TestBudgets[1][i].IsWithThirdParty, _service.Params.OtherAdBudgets[i].IsWithThirdParty);
         }
-        Assert.Equal(10000f, _service.Params.TotalBudget, 0.01f);
+        CustomAssertions.DecimalEqual(10000m, _service.Params.TotalBudget, 0.01m);
         Assert.True(_service.Params.IsWithThirdParty);
     }
 
     // testcases were precalculated on google spreadsheet with Goal Seek Addon
+    // InlineData is using float instead of decimal because decimal is not allowed
     [Theory]
     [InlineData(0f, 0f, 0f, 0, 0f, 0f, false, 0f)]
     [InlineData(0.1f, 0.05f, 2000f, 1, 15000f, 4000f, true, 3304.35f)]
     [InlineData(0.1f, 0.05f, 2000f, 1, 15000f, 1000f, true, 3304.35f)]
     [InlineData(0.1f, 0.05f, 100f, 2, 2000f, 200f, false, 690.9f)]
     public async Task BudgetOptimizerService_Solve_ShouldReturnCorrectResult(
-        float agencyFeePercentage, float thirdPartyFeePercentage, float fixedCostsAgencyHours, 
-        int budgetIndex, float totalBudgets, float initialGuess, bool isWithThirdParty, float expected)
+        decimal agencyFeePercentage, decimal thirdPartyFeePercentage, decimal fixedCostsAgencyHours, 
+        int budgetIndex, decimal totalBudgets, decimal initialGuess, bool isWithThirdParty, decimal expected)
     {
         _service.SetParameters(new BudgetOptimizerService.OptimizerParams{
             AgencyFeePercentage = agencyFeePercentage,
@@ -61,36 +66,35 @@ public class BudgetOptimizerServiceTests
             IsWithThirdParty = isWithThirdParty
         });
 
-        await _service.SolveAsync(initialGuess, 0.01f, 100);
+        await _service.SolveAsync(initialGuess, 0.01m, 100);
 
-        float actual = _service.Result;
+        decimal actual = _service.Result;
 
-        // Assert
-        Assert.Equal(expected, actual, 0.01f);
+        CustomAssertions.DecimalEqual(expected, actual, 0.01m);
     }
 
     [Fact]
     public async Task BudgetOptimizerService_Gets_ShouldProvideCorrectValues()
     {
         _service.SetParameters(new BudgetOptimizerService.OptimizerParams{
-            AgencyFeePercentage = 0.1f,
-            ThirdPartyFeePercentage = 0.05f,
-            FixedCostsAgencyHours = 2000f,
+            AgencyFeePercentage = 0.1m,
+            ThirdPartyFeePercentage = 0.05m,
+            FixedCostsAgencyHours = 2000m,
             OtherAdBudgets = TestBudgets[1],
-            TotalBudget = 15000f,
+            TotalBudget = 15000m,
             IsWithThirdParty = true
         });
 
-        await _service.SolveAsync(4000, 0.01f, 100);
+        await _service.SolveAsync(4000, 0.01m, 100);
 
-        float actual = _service.Result;
+        decimal actual = _service.Result;
 
         // Assert
-        Assert.Equal(3304.35f, actual, 0.01f);
-        Assert.Equal(11304.35f, _service.TotalAdSpend, 0.01f);
-        Assert.Equal(11304.35f, _service.ThirdPartyAdSpend, 0.01f);
-        Assert.Equal(1130.44f, _service.AgencyFees, 0.01f);
-        Assert.Equal(565.22f, _service.ThirdPartyFees, 0.01f);
-        Assert.Equal(15000f, _service.CalculatedTotalSpend, 0.01f);
+        CustomAssertions.DecimalEqual(3304.35m, actual, 0.01m);
+        CustomAssertions.DecimalEqual(11304.35m, _service.TotalAdSpend, 0.01m);
+        CustomAssertions.DecimalEqual(11304.35m, _service.ThirdPartyAdSpend, 0.01m);
+        CustomAssertions.DecimalEqual(1130.44m, _service.AgencyFees, 0.01m);
+        CustomAssertions.DecimalEqual(565.22m, _service.ThirdPartyFees, 0.01m);
+        CustomAssertions.DecimalEqual(15000m, _service.CalculatedTotalSpend, 0.01m);
     }
 }
