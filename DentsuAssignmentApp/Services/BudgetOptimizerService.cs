@@ -107,7 +107,7 @@ namespace DentsuAssignmentApp.Services
         }
         public float AgencyFees { get { return Params.AgencyFeePercentage * TotalAdSpend; } }
         public float ThirdPartyFees { get { return Params.ThirdPartyFeePercentage * ThirdPartyAdSpend; } }
-        public float CalculatedTotalBudget { get { return TotalAdSpend + AgencyFees + ThirdPartyFees + Params.FixedCostsAgencyHours; } }
+        public float CalculatedTotalSpend { get { return TotalAdSpend + AgencyFees + ThirdPartyFees + Params.FixedCostsAgencyHours; } }
         public struct OptimizerParams
         {
             public float TotalBudget;

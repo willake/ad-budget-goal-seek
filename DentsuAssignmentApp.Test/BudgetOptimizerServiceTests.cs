@@ -90,6 +90,6 @@ public class BudgetOptimizerServiceTests
         Assert.Equal(11304.35f, _service.ThirdPartyAdSpend, 0.01f);
         Assert.Equal(1130.44f, _service.AgencyFees, 0.01f);
         Assert.Equal(565.22f, _service.ThirdPartyFees, 0.01f);
-        Assert.Equal(15000f, _service.CalculatedTotalBudget, 0.01f);
+        Assert.Equal(15000f, _service.CalculatedTotalSpend, 0.01f);
     }
 }

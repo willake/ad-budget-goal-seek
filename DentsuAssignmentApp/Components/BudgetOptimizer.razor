@@ -92,6 +92,11 @@
             <div class="optimizer-result">
                 <div class="row">
                     <div>Ad budget: @BudgetOptimizerService.Result</div>
+                    <div>Total ad spend: @BudgetOptimizerService.TotalAdSpend</div>
+                    <div>Agency fees: @BudgetOptimizerService.AgencyFees</div>
+                    <div>Third party tool Fees: @BudgetOptimizerService.ThirdPartyFees</div>
+                    <div>Fixed costs for agency hours: @BudgetOptimizerService.Params.FixedCostsAgencyHours</div>
+                    <div>Total spend: @BudgetOptimizerService.CalculatedTotalSpend</div>
                 </div>
             </div>
         }
@@ -136,13 +141,13 @@
         BudgetOptimizerService.Solve(initialGuess, tolerance, maxIteration);
 
         // Print the results
-        Console.WriteLine($"Optimized Budget for Specific Ad (X4): €{BudgetOptimizerService.Result:F2}");
-        Console.WriteLine($"Total Ad Spend (X): €{BudgetOptimizerService.TotalAdSpend:F2}");
-        Console.WriteLine($"Third-Party Ad Spend (X): €{BudgetOptimizerService.ThirdPartyAdSpend:F2}");
-        Console.WriteLine($"Agency Fees: €{BudgetOptimizerService.AgencyFees:F2}");
-        Console.WriteLine($"Third-Party Tool Fees: €{BudgetOptimizerService.ThirdPartyFees:F2}");
-        Console.WriteLine($"Fixed Costs for Agency Hours: €{fixedCostsAgencyHours:F2}");
-        Console.WriteLine($"Total Campaign Budget (Calculated): €{BudgetOptimizerService.CalculatedTotalBudget:F2}");
+        Console.WriteLine($"Optimized budget for specific ad (X4): €{BudgetOptimizerService.Result:F2}");
+        Console.WriteLine($"Total ad spend (X): €{BudgetOptimizerService.TotalAdSpend:F2}");
+        Console.WriteLine($"Third-party ad spend (X): €{BudgetOptimizerService.ThirdPartyAdSpend:F2}");
+        Console.WriteLine($"Agency fees: €{BudgetOptimizerService.AgencyFees:F2}");
+        Console.WriteLine($"Third-party tool fees: €{BudgetOptimizerService.ThirdPartyFees:F2}");
+        Console.WriteLine($"Fixed costs for agency hours: €{fixedCostsAgencyHours:F2}");
+        Console.WriteLine($"Total spend (calculated): €{BudgetOptimizerService.CalculatedTotalSpend:F2}");
 
         hasResult = true;
     }
