@@ -2,9 +2,18 @@ namespace DentsuAssignmentApp.Services
 {
     public class BudgetOptimizerService 
     {
+        public event Action? OnSolve;
         public OptimizerParams Params { get; private set; }
         
-        public float Result { get; private set; }
+        private float _result;
+        public float Result { 
+            get => _result; 
+            private set
+            {
+                _result = value;
+                NotifiyOnSolve();
+            } 
+        }
 
         public void SetParameters(OptimizerParams optimizerParams) 
         {
@@ -26,34 +35,35 @@ namespace DentsuAssignmentApp.Services
 
         // Huiun: I use Newton-Raphson method to find the optimized budget
         // Reference: https://www.reddit.com/r/excel/comments/81coc9/how_to_solve_for_a_goal_seek_without_using_goal/
-        public bool Solve(float initialGuess, float tolerance, int maxIterations)
+        public async Task Solve(float initialGuess, float tolerance, int maxIterations)
         {
-            float otherAdSpend = 0;
-            float thirdPartyAdSpend = 0;
-            foreach(var budget in Params.OtherAdBudgets)
+            await Task.Run(() =>
             {
-                otherAdSpend += budget.Value;
-                if(budget.IsWithThirdParty) thirdPartyAdSpend += budget.Value;
-            }
+                float otherAdSpend = 0;
+                float thirdPartyAdSpend = 0;
+                foreach(var budget in Params.OtherAdBudgets)
+                {
+                    otherAdSpend += budget.Value;
+                    if(budget.IsWithThirdParty) thirdPartyAdSpend += budget.Value;
+                }
 
-            float x = initialGuess;
-            float iter = 0;
-            
-            while(
-                Math.Abs(BudgetEquation(otherAdSpend, thirdPartyAdSpend, x)) > tolerance
-                && iter < maxIterations)
-            {
-                float derivative = (
-                    BudgetEquation(otherAdSpend, thirdPartyAdSpend, x + tolerance) - BudgetEquation(otherAdSpend, thirdPartyAdSpend, x)) 
-                    / tolerance;
-                x = x - BudgetEquation(otherAdSpend, thirdPartyAdSpend, x) / derivative;
+                float x = initialGuess;
+                float iter = 0;
                 
-                iter++;
-            }
+                while(
+                    Math.Abs(BudgetEquation(otherAdSpend, thirdPartyAdSpend, x)) > tolerance
+                    && iter < maxIterations)
+                {
+                    float derivative = (
+                        BudgetEquation(otherAdSpend, thirdPartyAdSpend, x + tolerance) - BudgetEquation(otherAdSpend, thirdPartyAdSpend, x)) 
+                        / tolerance;
+                    x = x - BudgetEquation(otherAdSpend, thirdPartyAdSpend, x) / derivative;
+                    
+                    iter++;
+                }
 
-            Result = x;
-
-            return true;
+                Result = x;
+            });
         }
 
         public float GetCalculatedTotalBudget(float x)
@@ -108,6 +118,8 @@ namespace DentsuAssignmentApp.Services
         public float AgencyFees { get { return Params.AgencyFeePercentage * TotalAdSpend; } }
         public float ThirdPartyFees { get { return Params.ThirdPartyFeePercentage * ThirdPartyAdSpend; } }
         public float CalculatedTotalSpend { get { return TotalAdSpend + AgencyFees + ThirdPartyFees + Params.FixedCostsAgencyHours; } }
+        
+        private void NotifiyOnSolve() => OnSolve?.Invoke();
         public struct OptimizerParams
         {
             public float TotalBudget;
