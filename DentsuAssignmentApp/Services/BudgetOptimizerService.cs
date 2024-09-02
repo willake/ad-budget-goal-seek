@@ -35,7 +35,7 @@ namespace DentsuAssignmentApp.Services
 
         // Huiun: I use Newton-Raphson method to find the optimized budget
         // Reference: https://www.reddit.com/r/excel/comments/81coc9/how_to_solve_for_a_goal_seek_without_using_goal/
-        public async Task Solve(float initialGuess, float tolerance, int maxIterations)
+        public async Task SolveAsync(float initialGuess, float tolerance, int maxIterations)
         {
             await Task.Run(() =>
             {

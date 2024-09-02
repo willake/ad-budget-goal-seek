@@ -115,6 +115,8 @@
 
     private async Task HandleButtonCalculate()
     {
+        // handle while is solving
+        
         BudgetOptimizerService.SetParameters(
             new BudgetOptimizerService.OptimizerParams
             {
@@ -128,7 +130,7 @@
         );
 
         isSolving = true;
-        await BudgetOptimizerService.Solve(initialGuess, tolerance, maxIteration);
+        await BudgetOptimizerService.SolveAsync(initialGuess, tolerance, maxIteration);
         isSolving = false;
 
         // Print the results
