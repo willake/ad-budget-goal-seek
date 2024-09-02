@@ -1,20 +1,29 @@
 @rendermode InteractiveServer
 @inject BudgetOptimizerService BudgetOptimizerService
 
-@if (hasResult)
-{
-    <div class="optimizer-result">
-        <div class="row">
-            <div>Ad budget: @BudgetOptimizerService.Result</div>
-            <div>Total ad spend: @BudgetOptimizerService.TotalAdSpend</div>
-            <div>Agency fees: @BudgetOptimizerService.AgencyFees</div>
-            <div>Third party tool Fees: @BudgetOptimizerService.ThirdPartyFees</div>
-            <div>Fixed costs for agency hours: @BudgetOptimizerService.Params.FixedCostsAgencyHours</div>
-            <div>Total spend: @BudgetOptimizerService.CalculatedTotalSpend</div>
+<div class="container-fluid">
+    <div class="d-flex flex-column align-items-center">
+        <div class="optimizer-result">
+        @if (hasResult)
+        {
+            <div class="row">
+                <div>Ad budget: @BudgetOptimizerService.Result</div>
+                <div>Total ad spend: @BudgetOptimizerService.TotalAdSpend</div>
+                <div>Agency fees: @BudgetOptimizerService.AgencyFees</div>
+                <div>Third party tool Fees: @BudgetOptimizerService.ThirdPartyFees</div>
+                <div>Fixed costs for agency hours: @BudgetOptimizerService.Params.FixedCostsAgencyHours</div>
+                <div>Total spend: @BudgetOptimizerService.CalculatedTotalSpend</div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <h2 class="text-center">The result shows here</h2>
+            </div>
+        }
         </div>
     </div>
-}
-
+</div>
 @code {
     private bool hasResult = false;
 }
