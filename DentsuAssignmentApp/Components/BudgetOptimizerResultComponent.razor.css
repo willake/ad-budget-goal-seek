@@ -3,3 +3,7 @@
     max-width: 900px;
     padding: 50px 0px;
 }
+
+.optimizer-result-card {
+    border-color: #003049 !important;
+}

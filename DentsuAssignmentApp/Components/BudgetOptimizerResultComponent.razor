@@ -7,15 +7,18 @@
         @if (hasResult)
         {
             <div class="row">
-                <div>Ad budget: @BudgetOptimizerService.Result</div>
-                <div>Total ad spend: @BudgetOptimizerService.TotalAdSpend</div>
-                <div>Agency fees: @BudgetOptimizerService.AgencyFees</div>
-                <div>Third party tool Fees: @BudgetOptimizerService.ThirdPartyFees</div>
-                <div>Fixed costs for agency hours: @BudgetOptimizerService.Params.FixedCostsAgencyHours</div>
-                <div>Total spend: @BudgetOptimizerService.CalculatedTotalSpend</div>
+                <h2 class="text-center fw-bold p-2">Result</h2>
+                <div class="optimizer-result-card border border-4 rounded-3 p-3 shadow">
+                    <div class="f-4 fw-bold p-2">Ad budget: @BudgetOptimizerService.Result.ToString("F2") €</div>
+                    <div class="f-4 fw-bold p-2">Total ad spend: @BudgetOptimizerService.TotalAdSpend.ToString("F2") €</div>
+                    <div class="f-4 fw-bold p-2">Agency fees: @BudgetOptimizerService.AgencyFees.ToString("F2") €</div>
+                    <div class="f-4 fw-bold p-2">Third party tool Fees: @BudgetOptimizerService.ThirdPartyFees.ToString("F2") €</div>
+                    <div class="f-4 fw-bold p-2">Fixed costs for agency hours: @BudgetOptimizerService.Params.FixedCostsAgencyHours.ToString("F2") €</div>
+                    <div class="f-4 fw-bold p-2">Total spend: @BudgetOptimizerService.CalculatedTotalSpend.ToString("F2") €</div>
+                </div>
             </div>
         }
-        else
+        else 
         {
             <div class="row">
                 <h2 class="text-center fw-bold">The result shows here</h2>
