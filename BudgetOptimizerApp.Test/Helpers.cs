@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace DentsuAssignmentApp.Test.Helpers;
+namespace BudgetOptimizerApp.Test.Helpers;
 
 public static class CustomAssertions
 {

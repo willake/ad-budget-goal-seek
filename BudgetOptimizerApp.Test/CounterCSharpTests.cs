@@ -1,6 +1,6 @@
-using DentsuAssignmentApp.Components.Pages;
+using BudgetOptimizerApp.Components.Pages;
 
-namespace DentsuAssignmentApp.Test;
+namespace BudgetOptimizerApp.Test;
 
 /// <summary>
 /// These tests are written entirely in C#.

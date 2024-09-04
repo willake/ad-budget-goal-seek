@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using DentsuAssignmentApp.Services;
+using BudgetOptimizerApp.Services;
 using System.Threading.Tasks;
-using DentsuAssignmentApp.Test.Helpers;
+using BudgetOptimizerApp.Test.Helpers;
 
-namespace DentsuAssignmentApp.Test;
+namespace BudgetOptimizerApp.Test;
 
 public class BudgetOptimizerServiceTests
 {

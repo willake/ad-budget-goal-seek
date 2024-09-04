@@ -1,5 +1,5 @@
-using DentsuAssignmentApp.Components;
-using DentsuAssignmentApp.Services;
+using BudgetOptimizerApp.Components;
+using BudgetOptimizerApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

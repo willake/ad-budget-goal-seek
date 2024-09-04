@@ -1,4 +1,4 @@
-namespace DentsuAssignmentApp.Services 
+namespace BudgetOptimizerApp.Services 
 {
     public class BudgetOptimizerService 
     {
