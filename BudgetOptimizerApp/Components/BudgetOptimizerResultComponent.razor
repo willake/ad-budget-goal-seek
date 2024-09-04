@@ -1,0 +1,50 @@
+@rendermode InteractiveServer
+@inject BudgetOptimizerService BudgetOptimizerService
+
+<div class="container-fluid">
+    <div class="d-flex flex-column align-items-center">
+        <div class="optimizer-result">
+        @if (hasResult)
+        {
+            <div class="row">
+                <h2 class="text-center fw-bold p-2">Result</h2>
+                <div class="optimizer-result-card border border-4 rounded-3 p-3 shadow">
+                    <div class="f-4 fw-bold p-2">Ad budget: @BudgetOptimizerService.Result.ToString("F2") €</div>
+                    <div class="f-4 fw-bold p-2">Total ad spend: @BudgetOptimizerService.TotalAdSpend.ToString("F2") €</div>
+                    <div class="f-4 fw-bold p-2">Agency fees: @BudgetOptimizerService.AgencyFees.ToString("F2") €</div>
+                    <div class="f-4 fw-bold p-2">Third party tool Fees: @BudgetOptimizerService.ThirdPartyFees.ToString("F2") €</div>
+                    <div class="f-4 fw-bold p-2">Fixed costs for agency hours: @BudgetOptimizerService.Params.FixedCostsAgencyHours.ToString("F2") €</div>
+                    <div class="f-4 fw-bold p-2">Total spend: @BudgetOptimizerService.CalculatedTotalSpend.ToString("F2") €</div>
+                </div>
+            </div>
+        }
+        else 
+        {
+            <div class="row">
+                <h2 class="text-center fw-bold">The result shows here</h2>
+            </div>
+        }
+        </div>
+    </div>
+</div>
+@code {
+    private bool hasResult = false;
+
+    protected override void OnInitialized()
+    {
+        BudgetOptimizerService.OnSolve += HandleOnSolve;
+    }
+
+    private async void HandleOnSolve() 
+    {
+        await InvokeAsync(() => {
+            hasResult = BudgetOptimizerService.Result > 0.0m;
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        BudgetOptimizerService.OnSolve -= HandleOnSolve;
+    }
+}
